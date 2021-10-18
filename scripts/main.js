@@ -51,14 +51,16 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
         .attr('cy', d => d.y)
         .attr('fill', 'steelblue')
         .on('mouseover', function(event, d) {
+          d3.select(this).style("fill", "green");
           svg.append('text')
             .attr('class', 'ptLabel')
             .attr('x', d.x)
             .attr('y', d.y)
-            .text(d.name)
+            .text(`Name: ${d.name}, Grade: ${d.grade}, Score: ${d.score}`)
 
         })
         .on('mouseout', function(event, d) {
+          d3.select(this).style("fill", "steelblue");
           svg.selectAll('.ptLabel').remove() // remove all
         });
     });
