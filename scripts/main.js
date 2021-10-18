@@ -50,4 +50,15 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
         .attr('cx', d => d.x)
         .attr('cy', d => d.y)
         .attr('fill', 'steelblue')
+        .on('mouseover', function(event, d) {
+          svg.append('text')
+            .attr('class', 'ptLabel')
+            .attr('x', d.x)
+            .attr('y', d.y)
+            .text(d.name)
+
+        })
+        .on('mouseout', function(event, d) {
+          svg.selectAll('.ptLabel').remove() // remove all
+        });
     });
