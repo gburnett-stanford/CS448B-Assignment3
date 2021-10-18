@@ -1,3 +1,6 @@
+// Constants
+const LABEL_MARGIN = 15;
+
 // Set up size
 var mapWidth = 1000;
 var mapHeight = 750;
@@ -35,7 +38,7 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
     return {
         name: d.name,
         address: d.address,   
-        grade: +d.grade, 
+        grade: d.grade, 
         score: d.score,
         latitude: +d.latitude, 
         longitude: +d.longitude, 
@@ -52,12 +55,23 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
         .attr('fill', 'steelblue')
         .on('mouseover', function(event, d) {
           d3.select(this).style("fill", "green");
+          // Label for Name, Grade, and Score of each place
+          // Split into three 'text' labels for spacing
           svg.append('text')
             .attr('class', 'ptLabel')
             .attr('x', d.x)
             .attr('y', d.y)
-            .text(`Name: ${d.name}, Grade: ${d.grade}, Score: ${d.score}`)
-
+            .text(`Name: ${d.name}`)
+          svg.append('text')
+            .attr('class', 'ptLabel')
+            .attr('x', d.x)
+            .attr('y', d.y + LABEL_MARGIN)
+            .text(`Grade: ${d.grade}`)
+          svg.append('text')
+            .attr('class', 'ptLabel')
+            .attr('x', d.x)
+            .attr('y', d.y + 2 * LABEL_MARGIN)
+            .text(`Score: ${d.score}`)
         })
         .on('mouseout', function(event, d) {
           d3.select(this).style("fill", "steelblue");
