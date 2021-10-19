@@ -55,6 +55,8 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
         .attr('fill', 'gray')
         .on('mouseover', function(event, d) {
           d3.select(this).style('fill', 'steelblue');
+          d3.select(this).style("fill", "green");
+          d3.select(this).style("stroke", "black");
           // Label for Name, Grade, and Score of each place
           // Split into three 'text' labels for spacing
           svg.append('text')
@@ -75,6 +77,8 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
         })
         .on('mouseout', function(event, d) {
           d3.select(this).style("fill", "gray");
+          d3.select(this).style("fill", "steelblue");
+          d3.select(this).style("stroke", "none");
           svg.selectAll('.ptLabel').remove() // remove all
           
         });
