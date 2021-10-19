@@ -46,9 +46,10 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
         y: +y_projection
     }; })
     .then(function(restaurantData) {
-        svg.selectAll('circle')
+        svg.selectAll('.location_pin')
         .data(restaurantData)
         .join('circle')
+        .attr('class', 'location_pin')
         .attr('r', 3)
         .attr('cx', d => d.x)
         .attr('cy', d => d.y)
@@ -78,3 +79,12 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
           svg.selectAll('.ptLabel').remove() // remove all
         });
     });
+
+// First Radius 
+svg.append('circle')
+  .attr('class', 'radius')
+  .attr('r', 50)
+  .attr('cx', 100)
+  .attr('cy', 100)
+  .attr('fill', 'black')
+  .attr('opacity', 0.3);
