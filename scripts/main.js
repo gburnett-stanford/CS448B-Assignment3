@@ -93,6 +93,8 @@ svg.append('circle')
   .attr('fill', 'black')
   .attr('opacity', 0.3)
 
+// ***** DEFINE BEHAVIOR FOR DRAGGING THE SEARCH AREA ***** 
+
 // Behavior at the start of the drag (clicking on the search area): 
 // 1. Change the stroke to red, for visual feedback 
 function dragStart(){
@@ -100,8 +102,6 @@ function dragStart(){
     .attr('stroke', 'red')
     .attr('stroke-width', '2')
 }
-
-// ***** DEFINE BEHAVIOR FOR DRAGGING THE SEARCH AREA ***** 
 
 // Behavior while the search area is being dragged:  
 // 1. Move the x and y position of the search area 
