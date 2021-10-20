@@ -82,7 +82,7 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
 
 // ********** DRAW A SEARCH AREA **********
 
-// Draw a search area
+// Draw a search area as a circle 
 svg.append('circle')
   .attr('class', 'search_area')
   .attr('r', 50)
@@ -99,15 +99,23 @@ function dragStart(){
     .attr('stroke-width', '2')
 }
 
+// ***** DEFINE BEHAVIOR FOR DRAGGING THE SEARCH AREA ***** 
+
 // Behavior while the search area is being dragged:  
 // 1. Move the x and y position of the search area 
 // 2. Don't let users drag the search area out of bounds 
 function dragMove(event){
 
+  // the radius of the search area is ever changing so 
+  // we need to pull the value directly from the object 
   radius = d3.select(this).attr('r')
+
+  // defining new x and y values for the search area, to make sure
+  // they stay within the bounds of the map 
   bounded_cx = Math.max(radius, Math.min(mapWidth-radius, event.x));
   bounded_cy = Math.max(radius, Math.min(mapHeight-radius, event.y));
 
+  // set the new x and y positions
   d3.select(this)
     .attr('cx', bounded_cx)
     .attr('cy', bounded_cy)
