@@ -54,35 +54,44 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
         .attr('cx', d => d.x)
         .attr('cy', d => d.y)
         .attr('fill', 'steelblue')
-        .on('mouseover', function(event, d) {
-          d3.select(this).style("fill", "green")
-          d3.select(this).style("stroke", "black")
-          // Label for Name, Grade, and Score of each place
-          // Split into three 'text' labels for spacing
-          svg.append('text')
-            .attr('class', 'ptLabel')
-            .attr('x', d.x + LABEL_MARGIN)
-            .attr('y', d.y)
-            .text(`Name: ${d.name}`)
-          svg.append('text')
-            .attr('class', 'ptLabel')
-            .attr('x', d.x + LABEL_MARGIN)
-            .attr('y', d.y + LABEL_MARGIN)
-            .text(`Grade: ${d.grade}`)
-          svg.append('text')
-            .attr('class', 'ptLabel')
-            .attr('x', d.x + LABEL_MARGIN)
-            .attr('y', d.y + 2 * LABEL_MARGIN)
-            .text(`Score: ${d.score}`)
-        })
-        .on('mouseout', function(event, d) {
-          d3.select(this).style("fill", "steelblue")
-          d3.select(this).style("stroke", "none")
-          svg.selectAll('.ptLabel').remove() // remove all
-        });
+        .on('mouseover', MouseOver)
+        .on('mouseout', MouseOut);
     });
 
-// ********** DRAW A SEARCH AREA **********
+// ***** DEFINE BEHAVIOR FOR HOVERING OVER LOCATION POINTS ***** 
+
+function MouseOver(event, d){
+  d3.select(this)
+    .style("fill", "green")
+    .style("stroke", "black")
+
+  // Label for Name, Grade, and Score of each place
+  // Split into three 'text' labels for spacing
+  svg.append('text')
+    .attr('class', 'ptLabel')
+    .attr('x', d.x + LABEL_MARGIN)
+    .attr('y', d.y)
+    .text(`Name: ${d.name}`)
+  svg.append('text')
+    .attr('class', 'ptLabel')
+    .attr('x', d.x + LABEL_MARGIN)
+    .attr('y', d.y + LABEL_MARGIN)
+    .text(`Grade: ${d.grade}`)
+  svg.append('text')
+    .attr('class', 'ptLabel')
+    .attr('x', d.x + LABEL_MARGIN)
+    .attr('y', d.y + 2 * LABEL_MARGIN)
+    .text(`Score: ${d.score}`)
+}
+
+function MouseOut(){
+  d3.select(this)
+    .style("fill", "steelblue")
+    .style("stroke", "none")
+  svg.selectAll('.ptLabel').remove() // remove all
+}
+
+// ***** DRAW A SEARCH AREA *****
 
 // Draw a search area as circles A and B
 svg.append('circle')
