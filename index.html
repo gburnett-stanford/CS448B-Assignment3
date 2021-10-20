@@ -8,9 +8,19 @@
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-    <h1>RestaurantFinder</h1>
-    <div id='map-svg'></div>
+    <!-- Load D3 -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <h1>RestaurantFinder</h1>
+
+    <!-- Add the map svg -->
+    <div id='map-svg'></div>
+    
+    <!-- Add the radius slider -->
+    <p id="value">Radius Slider</p>
+    <input type="range" name="radiusSlider" id=radius-slider min="10" max="100" value="50">
+
+    <!-- Main Script -->
     <script src="scripts/main.js"></script>
 </body>
 </html>
