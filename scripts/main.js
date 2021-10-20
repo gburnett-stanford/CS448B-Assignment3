@@ -84,12 +84,23 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
 
 // ********** DRAW A SEARCH AREA **********
 
-// Draw a search area as a circle 
+// Draw a search area as circles A and B
 svg.append('circle')
   .attr('class', 'radius')
+  .attr('id', 'circle-a')
   .attr('r', 50)
   .attr('cx', 100)
   .attr('cy', 100)
+  .attr('fill', 'black')
+  .attr('opacity', 0.3)
+
+// Draw a search area as a circle 
+svg.append('circle')
+  .attr('class', 'radius')
+  .attr('id', 'circle-b')
+  .attr('r', 50)
+  .attr('cx', 200)
+  .attr('cy', 200)
   .attr('fill', 'black')
   .attr('opacity', 0.3)
 
@@ -138,7 +149,7 @@ var drag_handler = d3.drag()
     .on('end', dragEnd)
 
 // Apply the handler to the radius objects 
-drag_handler(svg.select('.radius'))
+drag_handler(svg.selectAll('.radius'))
 
 // ********** RADIUS SLIDER **********
 
