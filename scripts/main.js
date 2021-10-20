@@ -20,7 +20,7 @@ var projection = d3.geoMercator()
 // projection.invert([x, y]) returns [lon, lat]
 
 // Add an SVG element to the DOM
-var svg = d3.select('body').append('svg')
+var svg = d3.select('#map-svg').append('svg')
   .attr('width', mapWidth)
   .attr('height', mapHeight);
 
@@ -53,30 +53,31 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
         .attr('r', 3)
         .attr('cx', d => d.x)
         .attr('cy', d => d.y)
-        .attr('fill', 'steelblue')
+        .attr('fill', 'gray')
         .on('mouseover', function(event, d) {
-          d3.select(this).style("fill", "green");
+          d3.select(this).style('fill', 'steelblue');
           // Label for Name, Grade, and Score of each place
           // Split into three 'text' labels for spacing
           svg.append('text')
             .attr('class', 'ptLabel')
-            .attr('x', d.x)
+            .attr('x', d.x + LABEL_MARGIN)
             .attr('y', d.y)
             .text(`Name: ${d.name}`)
           svg.append('text')
             .attr('class', 'ptLabel')
-            .attr('x', d.x)
+            .attr('x', d.x + LABEL_MARGIN)
             .attr('y', d.y + LABEL_MARGIN)
             .text(`Grade: ${d.grade}`)
           svg.append('text')
             .attr('class', 'ptLabel')
-            .attr('x', d.x)
+            .attr('x', d.x + LABEL_MARGIN)
             .attr('y', d.y + 2 * LABEL_MARGIN)
             .text(`Score: ${d.score}`)
         })
         .on('mouseout', function(event, d) {
-          d3.select(this).style("fill", "steelblue");
+          d3.select(this).style("fill", "gray");
           svg.selectAll('.ptLabel').remove() // remove all
+          
         });
     });
 
