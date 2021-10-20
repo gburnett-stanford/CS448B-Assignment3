@@ -86,7 +86,7 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
 
 // Draw a search area as a circle 
 svg.append('circle')
-  .attr('class', '.radius')
+  .attr('class', 'radius')
   .attr('r', 50)
   .attr('cx', 100)
   .attr('cy', 100)
@@ -159,4 +159,4 @@ d3.select("#radius-slider").on("change", function(d){
   selectedValue = this.value
   console.log(selectedValue)
   updateRadius(selectedValue)
-})
+});
