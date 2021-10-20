@@ -20,8 +20,8 @@ var projection = d3.geoMercator()
 // projection.invert([x, y]) returns [lon, lat]
 
 // Add an SVG element to the DOM
-var svg = d3.select('#map-svg').append('svg')
-  .attr('width', mapWidth)
+var svg = d3.select('div#map-svg').append('svg')
+  .attr('width', mapWidth + 250)
   .attr('height', mapHeight);
 
 // Add SVG map at correct size, assuming map is saved in a subdirectory called `data`
@@ -53,9 +53,10 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
         .attr('r', 3)
         .attr('cx', d => d.x)
         .attr('cy', d => d.y)
-        .attr('fill', 'gray')
+        .attr('fill', 'steelblue')
         .on('mouseover', function(event, d) {
-          d3.select(this).style('fill', 'steelblue');
+          d3.select(this).style("fill", "green")
+          d3.select(this).style("stroke", "black")
           // Label for Name, Grade, and Score of each place
           // Split into three 'text' labels for spacing
           svg.append('text')
@@ -75,7 +76,8 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
             .text(`Score: ${d.score}`)
         })
         .on('mouseout', function(event, d) {
-          d3.select(this).style("fill", "gray");
+          d3.select(this).style("fill", "steelblue")
+          d3.select(this).style("stroke", "none")
           svg.selectAll('.ptLabel').remove() // remove all
         });
     });
@@ -84,7 +86,7 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
 
 // Draw a search area as a circle 
 svg.append('circle')
-  .attr('class', 'search_area')
+  .attr('class', '.radius')
   .attr('r', 50)
   .attr('cx', 100)
   .attr('cy', 100)
@@ -136,4 +138,25 @@ var drag_handler = d3.drag()
     .on('end', dragEnd)
 
 // Apply the handler to the radius objects 
-drag_handler(svg.select('.search_area'))
+drag_handler(svg.select('.radius'))
+
+// ********** RADIUS SLIDER **********
+
+// A function that update the chart when slider is moved
+var circleRadius = d3.selectAll('.radius')
+
+function updateRadius(updatedRadius) {
+  console.log(updatedRadius)
+  circleRadius.transition()
+  .ease(d3.easeLinear)
+    .duration(200)
+    .delay(10)
+    .attr("r", updatedRadius)
+}
+
+// Listen to the slider
+d3.select("#radius-slider").on("change", function(d){
+  selectedValue = this.value
+  console.log(selectedValue)
+  updateRadius(selectedValue)
+})
