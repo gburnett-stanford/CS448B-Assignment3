@@ -44,19 +44,20 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
         longitude: +d.longitude, 
         x: +x_projection,
         y: +y_projection
-    }; })
-    .then(function(restaurantData) {
-        svg.selectAll('.location_pin')
-        .data(restaurantData)
-        .join('circle')
-        .attr('class', 'location_pin')
-        .attr('r', 3)
-        .attr('cx', d => d.x)
-        .attr('cy', d => d.y)
-        .attr('fill', 'steelblue')
-        .on('mouseover', MouseOver)
-        .on('mouseout', MouseOut);
-    });
+    }; }).then(drawLocationPins);
+
+function drawLocationPins(restaurantData){
+  svg.selectAll('.location_pin')
+    .data(restaurantData)
+    .join('circle')
+    .attr('class', 'location_pin')
+    .attr('r', 3)
+    .attr('cx', d => d.x)
+    .attr('cy', d => d.y)
+    .attr('fill', 'steelblue')
+    .on('mouseover', MouseOver)
+    .on('mouseout', MouseOut);
+}
 
 // ***** DEFINE BEHAVIOR FOR HOVERING OVER LOCATION POINTS ***** 
 
@@ -160,7 +161,7 @@ var drag_handler = d3.drag()
 // Apply the handler to the radius objects 
 drag_handler(svg.selectAll('.radius'))
 
-// ********** RADIUS SLIDER **********
+// ***** RADIUS SLIDER *****
 
 // A function that update the chart when slider is moved
 var circleRadius = d3.selectAll('.radius')
@@ -180,3 +181,12 @@ d3.select("#radius-slider").on("change", function(d){
   console.log(selectedValue)
   updateRadius(selectedValue)
 });
+
+// ***** CREATE FUNCTIONS FOR INTERSECTION *****
+
+// calculates the distance between two points (x0, y0) and (x1, y1) 
+function distance(x0, y0, x1, y1){
+  dx = x0 - x1 
+  dy = y0 - y1
+  return Math.sqrt(dx * dx + dy * dy)
+}
