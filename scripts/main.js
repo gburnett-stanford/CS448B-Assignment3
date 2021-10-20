@@ -77,15 +77,55 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
         .on('mouseout', function(event, d) {
           d3.select(this).style("fill", "gray");
           svg.selectAll('.ptLabel').remove() // remove all
-          
         });
     });
 
-// First Radius 
+// ********** DRAW A SEARCH AREA **********
+
+// Draw a search area
 svg.append('circle')
-  .attr('class', 'radius')
+  .attr('class', 'search_area')
   .attr('r', 50)
   .attr('cx', 100)
   .attr('cy', 100)
   .attr('fill', 'black')
-  .attr('opacity', 0.3);
+  .attr('opacity', 0.3)
+
+// Behavior at the start of the drag (clicking on the search area): 
+// 1. Change the stroke to red, for visual feedback 
+function dragStart(){
+  d3.select(this)
+    .attr('stroke', 'red')
+    .attr('stroke-width', '2')
+}
+
+// Behavior while the search area is being dragged:  
+// 1. Move the x and y position of the search area 
+// 2. Don't let users drag the search area out of bounds 
+function dragMove(event){
+
+  radius = d3.select(this).attr('r')
+  bounded_cx = Math.max(radius, Math.min(mapWidth-radius, event.x));
+  bounded_cy = Math.max(radius, Math.min(mapHeight-radius, event.y));
+
+  d3.select(this)
+    .attr('cx', bounded_cx)
+    .attr('cy', bounded_cy)
+}
+
+// Behavior when the search area is no longer being dragged:  
+// 1. Remove the stroke 
+function dragEnd(){
+  d3.select(this)
+    .attr('stroke', null)
+    .attr('stroke-width', null)
+}
+
+// Create a handler object to descbribe the dragging behavior 
+var drag_handler = d3.drag()
+    .on('start', dragStart)
+    .on('drag', dragMove)
+    .on('end', dragEnd)
+
+// Apply the handler to the radius objects 
+drag_handler(svg.select('.search_area'))
