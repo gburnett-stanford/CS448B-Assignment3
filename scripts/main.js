@@ -30,8 +30,7 @@ svg.append('image')
   .attr('height', mapHeight)
   .attr('xlink:href', 'data/map.svg');
 
-// ********** PLOT RESTAURANT LOCATIONS **********
-// field: name, address, grade, score, latitude, longitude 
+// ********** LOAD AND DRAW RESTAURANT LOCATIONS **********
 
 restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
     [x_projection, y_projection] = projection([d.longitude, d.latitude])
@@ -44,149 +43,173 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
         longitude: +d.longitude, 
         x: +x_projection,
         y: +y_projection
-    }; }).then(drawLocationPins);
+    }; 
+      }).then(function(restaurantData) {
 
-function drawLocationPins(restaurantData){
-  svg.selectAll('.location_pin')
-    .data(restaurantData)
-    .join('circle')
-    .attr('class', 'location_pin')
-    .attr('r', 3)
-    .attr('cx', d => d.x)
-    .attr('cy', d => d.y)
-    .attr('fill', 'steelblue')
-    .on('mouseover', MouseOver)
-    .on('mouseout', MouseOut);
-}
+    // Draw a search area as a circle
+    svg.append('circle')
+      .attr('class', 'radius')
+      .attr('id', 'circle-a')
+      .attr('r', 50)
+      .attr('cx', 100)
+      .attr('cy', 100)
+      .attr('fill', 'black')
+      .attr('opacity', 0.3)
 
-// ***** DEFINE BEHAVIOR FOR HOVERING OVER LOCATION POINTS ***** 
+    // Draw a search area as a circle 
+    svg.append('circle')
+      .attr('class', 'radius')
+      .attr('id', 'circle-b')
+      .attr('r', 50)
+      .attr('cx', 200)
+      .attr('cy', 200)
+      .attr('fill', 'black')
+      .attr('opacity', 0.3)
 
-function MouseOver(event, d){
-  d3.select(this)
-    .style("fill", "green")
-    .style("stroke", "black")
+    svg.selectAll('.location_pin')
+      .data(restaurantData)
+      .join('circle')
+      .attr('r', 3)
+      .attr('cx', d => d.x)
+      .attr('cy', d => d.y)
+      .attr('fill', 'grey')
+      .attr('opacity', 0.3)
+      .classed('location_pin', true)
+      .classed('intersecting_point', intersecting)
 
-  // Label for Name, Grade, and Score of each place
-  // Split into three 'text' labels for spacing
-  svg.append('text')
-    .attr('class', 'ptLabel')
-    .attr('x', d.x + LABEL_MARGIN)
-    .attr('y', d.y)
-    .text(`Name: ${d.name}`)
-  svg.append('text')
-    .attr('class', 'ptLabel')
-    .attr('x', d.x + LABEL_MARGIN)
-    .attr('y', d.y + LABEL_MARGIN)
-    .text(`Grade: ${d.grade}`)
-  svg.append('text')
-    .attr('class', 'ptLabel')
-    .attr('x', d.x + LABEL_MARGIN)
-    .attr('y', d.y + 2 * LABEL_MARGIN)
-    .text(`Score: ${d.score}`)
-}
+    // determine if this point is intersecting with the radii or not
+    function intersecting(){
 
-function MouseOut(){
-  d3.select(this)
-    .style("fill", "steelblue")
-    .style("stroke", "none")
-  svg.selectAll('.ptLabel').remove() // remove all
-}
+      // retrieve the objects for the circles and location pin
+      circle_a = d3.select('#circle-a')
+      location_pin = d3.select(this)
 
-// ***** DRAW A SEARCH AREA *****
+      // create objects representing the centers 
+      circle_a_center = {x: Number(circle_a.attr('cx')), y: Number(circle_a.attr('cy'))}
+      location_pin_center = {x: Number(location_pin.attr('cx')), y: Number(location_pin.attr('cy'))}
 
-// Draw a search area as circles A and B
-svg.append('circle')
-  .attr('class', 'radius')
-  .attr('id', 'circle-a')
-  .attr('r', 50)
-  .attr('cx', 100)
-  .attr('cy', 100)
-  .attr('fill', 'black')
-  .attr('opacity', 0.3)
+      // get the current radius of each circle 
+      circle_a_radius = Number(circle_a.attr('r'))
 
-// Draw a search area as a circle 
-svg.append('circle')
-  .attr('class', 'radius')
-  .attr('id', 'circle-b')
-  .attr('r', 50)
-  .attr('cx', 200)
-  .attr('cy', 200)
-  .attr('fill', 'black')
-  .attr('opacity', 0.3)
+      // calculate the distance from the location pin to each circle 
+      distance_to_a = distance(circle_a_center, location_pin_center)
 
-// ***** DEFINE BEHAVIOR FOR DRAGGING THE SEARCH AREA ***** 
+      console.log(circle_a_radius)
 
-// Behavior at the start of the drag (clicking on the search area): 
-// 1. Change the stroke to red, for visual feedback 
-function dragStart(){
-  d3.select(this)
-    .attr('stroke', 'red')
-    .attr('stroke-width', '2')
-}
+      return distance_to_a<=circle_a_radius
 
-// Behavior while the search area is being dragged:  
-// 1. Move the x and y position of the search area 
-// 2. Don't let users drag the search area out of bounds 
-function dragMove(event){
+    }
 
-  // the radius of the search area is ever changing so 
-  // we need to pull the value directly from the object 
-  radius = d3.select(this).attr('r')
+    svg.selectAll('.intersecting_point')
+      .attr('fill', 'steelblue')
+      .on('mouseover', mouseOver)
+      .on('mouseout', mouseOut)
 
-  // defining new x and y values for the search area, to make sure
-  // they stay within the bounds of the map 
-  bounded_cx = Math.max(radius, Math.min(mapWidth-radius, event.x));
-  bounded_cy = Math.max(radius, Math.min(mapHeight-radius, event.y));
+    // ***** DEFINE BEHAVIOR FOR HOVERING OVER LOCATION POINTS ***** 
 
-  // set the new x and y positions
-  d3.select(this)
-    .attr('cx', bounded_cx)
-    .attr('cy', bounded_cy)
-}
+    function mouseOver(event, d){
+      d3.select(this)
+        .style("fill", "green")
+        .style("stroke", "black")
 
-// Behavior when the search area is no longer being dragged:  
-// 1. Remove the stroke 
-function dragEnd(){
-  d3.select(this)
-    .attr('stroke', null)
-    .attr('stroke-width', null)
-}
+      // Label for Name, Grade, and Score of each place
+      // Split into three 'text' labels for spacing
+      svg.append('text')
+        .attr('class', 'ptLabel')
+        .attr('x', d.x + LABEL_MARGIN)
+        .attr('y', d.y)
+        .text(`Name: ${d.name}`)
+      svg.append('text')
+        .attr('class', 'ptLabel')
+        .attr('x', d.x + LABEL_MARGIN)
+        .attr('y', d.y + LABEL_MARGIN)
+        .text(`Grade: ${d.grade}`)
+      svg.append('text')
+        .attr('class', 'ptLabel')
+        .attr('x', d.x + LABEL_MARGIN)
+        .attr('y', d.y + 2 * LABEL_MARGIN)
+        .text(`Score: ${d.score}`)
+    }
 
-// Create a handler object to descbribe the dragging behavior 
-var drag_handler = d3.drag()
-    .on('start', dragStart)
-    .on('drag', dragMove)
-    .on('end', dragEnd)
+    function mouseOut(){
+      d3.select(this)
+        .style("fill", "steelblue")
+        .style("stroke", "none")
+      svg.selectAll('.ptLabel').remove() // remove all
+    }
 
-// Apply the handler to the radius objects 
-drag_handler(svg.selectAll('.radius'))
+    // ***** DEFINE BEHAVIOR FOR DRAGGING THE SEARCH AREA ***** 
 
-// ***** RADIUS SLIDER *****
+    // Behavior at the start of the drag (clicking on the search area): 
+    // 1. Change the stroke to red, for visual feedback 
+    function dragStart(){
+      d3.select(this)
+        .attr('stroke', 'red')
+        .attr('stroke-width', '2')
+    }
 
-// A function that update the chart when slider is moved
-var circleRadius = d3.selectAll('.radius')
+    // Behavior while the search area is being dragged:  
+    // 1. Move the x and y position of the search area 
+    // 2. Don't let users drag the search area out of bounds 
+    function dragMove(event){
 
-function updateRadius(updatedRadius) {
-  console.log(updatedRadius)
-  circleRadius.transition()
-  .ease(d3.easeLinear)
-    .duration(200)
-    .delay(10)
-    .attr("r", updatedRadius)
-}
+      // the radius of the search area is ever changing so 
+      // we need to pull the value directly from the object 
+      radius = d3.select(this).attr('r')
 
-// Listen to the slider
-d3.select("#radius-slider").on("change", function(d){
-  selectedValue = this.value
-  console.log(selectedValue)
-  updateRadius(selectedValue)
-});
+      // defining new x and y values for the search area, to make sure
+      // they stay within the bounds of the map 
+      bounded_cx = Math.max(radius, Math.min(mapWidth-radius, event.x));
+      bounded_cy = Math.max(radius, Math.min(mapHeight-radius, event.y));
 
-// ***** CREATE FUNCTIONS FOR INTERSECTION *****
+      // set the new x and y positions
+      d3.select(this)
+        .attr('cx', bounded_cx)
+        .attr('cy', bounded_cy)
+    }
 
-// calculates the distance between two points (x0, y0) and (x1, y1) 
-function distance(x0, y0, x1, y1){
-  dx = x0 - x1 
-  dy = y0 - y1
-  return Math.sqrt(dx * dx + dy * dy)
-}
+    // Behavior when the search area is no longer being dragged:  
+    // 1. Remove the stroke 
+    function dragEnd(){
+      d3.select(this)
+        .attr('stroke', null)
+        .attr('stroke-width', null)
+    }
+
+    // Create a handler object to descbribe the dragging behavior 
+    var drag_handler = d3.drag()
+        .on('start', dragStart)
+        .on('drag', dragMove)
+        .on('end', dragEnd)
+
+    // Apply the handler to the radius objects 
+    drag_handler(svg.selectAll('.radius'))
+
+    // ***** RADIUS SLIDER *****
+
+    // A function that update the chart when slider is moved
+    var circleRadius = d3.selectAll('.radius')
+
+    function updateRadius(updatedRadius) {
+      circleRadius.transition()
+      .ease(d3.easeLinear)
+        .duration(200)
+        .delay(10)
+        .attr("r", updatedRadius)
+    }
+
+    // Listen to the slider
+    d3.select("#radius-slider").on("change", function(d){
+      selectedValue = this.value
+      updateRadius(selectedValue)
+    });
+
+    // ***** CREATE FUNCTIONS FOR INTERSECTION *****
+
+    // calculates the distance between two points p1 and p2 
+    function distance(p1, p2){
+      dx = p1.x - p2.x 
+      dy = p1.y - p2.y
+      return Math.sqrt(dx * dx + dy * dy)
+    }
+  })
