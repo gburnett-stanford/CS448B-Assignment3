@@ -47,6 +47,7 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
       }).then(drawLocationPins) 
 
 function drawLocationPins(restaurantData){
+
   // Draw a search area as a circle
   svg.append('circle')
     .attr('class', 'radius')
@@ -105,9 +106,9 @@ function drawLocationPins(restaurantData){
 
   }
 
+  // update which points are intersecting and which ones are not 
   function updateLocationPins(){
-
-    // update which points are intersecting and which ones are not 
+ 
     svg.selectAll('.location_pin')
       .attr('fill', 'grey')
       .on('mouseover', null)
@@ -182,9 +183,6 @@ function drawLocationPins(restaurantData){
     d3.select(this)
       .attr('cx', bounded_cx)
       .attr('cy', bounded_cy)
-
-    // update location pins 
-    updateLocationPins()
   }
 
   // Behavior when the search area is no longer being dragged:  
@@ -193,6 +191,7 @@ function drawLocationPins(restaurantData){
     d3.select(this)
       .attr('stroke', null)
       .attr('stroke-width', null)
+    updateLocationPins()
   }
 
   // Create a handler object to descbribe the dragging behavior 
@@ -211,17 +210,17 @@ function drawLocationPins(restaurantData){
 
   function updateRadius(updatedRadius) {
     circleRadius.transition()
-    .ease(d3.easeLinear)
-      .duration(200)
-      .delay(10)
-      .attr("r", updatedRadius)
+      .ease(d3.easeLinear)
+        .duration(200)
+        .delay(10)
+        .attr('r', updatedRadius)
+    updateLocationPins()
   }
 
   // Listen to the slider
   d3.select("#radius-slider").on("change", function(d){
     selectedValue = this.value
     updateRadius(selectedValue)
-    updateLocationPins()
   });
 
   // ***** CREATE FUNCTIONS FOR INTERSECTION *****
