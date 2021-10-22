@@ -1,8 +1,6 @@
 // Constants
 const LABEL_MARGIN = 15;
 
-curScore = 50;
-
 // Set up size
 var mapWidth = 1000;
 var mapHeight = 750;
@@ -104,9 +102,16 @@ function drawLocationPins(restaurantData) {
     svg.selectAll('.intersecting_point')
     .attr('fill', function(d){
       if(parseInt(d.score) >= currentScore) {
-        return 'steelblue'
+        return 'dodgerblue'
       } else {
         return 'none'
+      };
+    })
+    .attr('opacity', function(d){
+      if(parseInt(d.score) >= currentScore) {
+        return 1
+      } else {
+        return 0.3
       };
     })
     .on('mouseover', mouseOver)
@@ -141,7 +146,7 @@ function drawLocationPins(restaurantData) {
 
   function mouseOut() {
     d3.select(this)
-      .style("fill", "steelblue")
+      .style("fill", "dodgerblue")
       .style("stroke", "none")
     svg.selectAll('.ptLabel').remove() // remove all
   }
