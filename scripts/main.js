@@ -1,6 +1,8 @@
 // Constants
 const LABEL_MARGIN = 15;
 
+curScore = 50;
+
 // Set up size
 var mapWidth = 1000;
 var mapHeight = 750;
@@ -46,6 +48,29 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
   }; 
 }).then(drawLocationPins);
 
+// ********** DRAW A SEARCH AREA (CIRCLES A & B) **********
+
+// Draw a search area as circles A and B
+svg.append('circle')
+.attr('class', 'radius')
+.attr('id', 'circle-a')
+.attr('r', 50)
+.attr('cx', 100)
+.attr('cy', 100)
+.attr('fill', 'black')
+.attr('opacity', 0.3)
+
+// Draw a search area as a circle 
+svg.append('circle')
+.attr('class', 'radius')
+.attr('id', 'circle-b')
+.attr('r', 50)
+.attr('cx', 200)
+.attr('cy', 200)
+.attr('fill', 'black')
+.attr('opacity', 0.3)
+.text('B')
+
 // Function: drawLocationPins
 function drawLocationPins(restaurantData) {
 
@@ -57,33 +82,10 @@ function drawLocationPins(restaurantData) {
     .attr('r', 3)
     .attr('cx', d => d.x)
     .attr('cy', d => d.y)
-    .attr('fill', 'black')
+    //.attr('fill', 'black')
     .attr('opacity', 0.3)
 
-  // updateLocationPins()
-
-  // ********** DRAW A SEARCH AREA (CIRCLES A & B) **********
-
-  // Draw a search area as circles A and B
-  svg.append('circle')
-  .attr('class', 'radius')
-  .attr('id', 'circle-a')
-  .attr('r', 50)
-  .attr('cx', 100)
-  .attr('cy', 100)
-  .attr('fill', 'black')
-  .attr('opacity', 0.3)
-
-  // Draw a search area as a circle 
-  svg.append('circle')
-  .attr('class', 'radius')
-  .attr('id', 'circle-b')
-  .attr('r', 50)
-  .attr('cx', 200)
-  .attr('cy', 200)
-  .attr('fill', 'black')
-  .attr('opacity', 0.3)
-  .text('B')
+  updateLocationPins()
 
   // ***** DEFINE BEHAVIOR FOR DRAGGING THE SEARCH AREA ***** 
 
@@ -194,14 +196,13 @@ function drawLocationPins(restaurantData) {
   // update which points are intersecting and which ones are not 
   function updateLocationPins() {
     svg.selectAll('.location_pin')
-      /*.attr('fill', function(d) {
-        if(parseInt(d.score) >= parseInt(updatedScore)) {
-          return 'steelblue'
+      .attr('fill', function(d) {
+        if(parseInt(d.score) >= parseInt(curScore)) {
+          return 'black'
         } else {
           return 'none'
         };
-      })*/
-      .attr('fill', 'black')
+      })
       .on('mouseover', null)
       .on('mouseout', null)
       .classed('intersecting_point', intersecting)
@@ -325,6 +326,7 @@ function drawLocationPins(restaurantData) {
   // Listen to the score slider
   d3.select("#score-slider").on("change", function(d) {
   selectedValue = this.value
+  curScore = selectedValue
   updateScore(selectedValue)
   });
 }
