@@ -107,13 +107,6 @@ function drawLocationPins(restaurantData) {
         return 'none'
       };
     })
-    .attr('opacity', function(d){
-      if(parseInt(d.score) >= currentScore) {
-        return 1
-      } else {
-        return 0.3
-      };
-    })
     .on('mouseover', mouseOver)
     .on('mouseout', mouseOut)
   }
@@ -122,8 +115,8 @@ function drawLocationPins(restaurantData) {
 
   function mouseOver(event, d) {
     d3.select(this)
-      .style("fill", "green")
       .style("stroke", "black")
+      .attr("opacity", 1)
 
     // Label for Name, Grade, and Score of each place
     // Split into three 'text' labels for spacing
@@ -146,8 +139,8 @@ function drawLocationPins(restaurantData) {
 
   function mouseOut() {
     d3.select(this)
-      .style("fill", "dodgerblue")
       .style("stroke", "none")
+      .attr("opacity", 0.3)
     svg.selectAll('.ptLabel').remove() // remove all
   }
 
