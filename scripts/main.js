@@ -32,7 +32,117 @@ svg.append('image')
 
 // ********** LOAD AND DRAW RESTAURANT LOCATIONS **********
 
+<<<<<<< Updated upstream
 restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
+=======
+
+
+// ********** DRAW A SEARCH AREA **********
+
+// Draw a search area as circles A and B
+svg.append('circle')
+  .attr('class', 'radius')
+  .attr('id', 'circle-a')
+  .attr('r', 50)
+  .attr('cx', 100)
+  .attr('cy', 100)
+  .attr('fill', 'black')
+  .attr('opacity', 0.3)
+
+//d3.select("#circle-a")
+    svg.append('text')
+    .text('A')
+
+// Draw a search area as a circle 
+svg.append('circle')
+  .attr('class', 'radius')
+  .attr('id', 'circle-b')
+  .attr('r', 50)
+  .attr('cx', 200)
+  .attr('cy', 200)
+  .attr('fill', 'black')
+  .attr('opacity', 0.3)
+  .text('B')
+
+// ***** DEFINE BEHAVIOR FOR DRAGGING THE SEARCH AREA ***** 
+
+// Behavior at the start of the drag (clicking on the search area): 
+// 1. Change the stroke to red, for visual feedback 
+function dragStart(){
+  d3.select(this)
+    .attr('stroke', 'red')
+    .attr('stroke-width', '2')
+}
+
+// Behavior while the search area is being dragged:  
+// 1. Move the x and y position of the search area 
+// 2. Don't let users drag the search area out of bounds 
+function dragMove(event){
+
+  // the radius of the search area is ever changing so 
+  // we need to pull the value directly from the object 
+  radius = d3.select(this).attr('r')
+
+  // defining new x and y values for the search area, to make sure
+  // they stay within the bounds of the map 
+  bounded_cx = Math.max(radius, Math.min(mapWidth-radius, event.x));
+  bounded_cy = Math.max(radius, Math.min(mapHeight-radius, event.y));
+
+  // set the new x and y positions
+  d3.select(this)
+    .attr('cx', bounded_cx)
+    .attr('cy', bounded_cy)
+}
+
+// Behavior when the search area is no longer being dragged:  
+// 1. Remove the stroke 
+function dragEnd(){
+  d3.select(this)
+    .attr('stroke', null)
+    .attr('stroke-width', null)
+}
+
+// Create a handler object to descbribe the dragging behavior 
+var drag_handler = d3.drag()
+    .on('start', dragStart)
+    .on('drag', dragMove)
+    .on('end', dragEnd)
+
+// Apply the handler to the radius objects 
+drag_handler(svg.selectAll('.radius'))
+
+// ********** RADIUS SLIDER **********
+
+var circleRadius = d3.selectAll('.radius')
+
+// A function that update the chart when slider is moved
+function updateRadius(updatedRadius) {
+  circleRadius.transition()
+  .ease(d3.easeLinear)
+    .duration(200)
+    .delay(10)
+    .attr("r", updatedRadius)
+}
+
+// Listen to the radius slider
+d3.select("#radius-slider").on("change", function(d){
+  selectedValue = this.value
+  updateRadius(selectedValue)
+});
+
+// ********** SCORE SLIDER **********
+
+var scoreValue = d3.select('#score-value')
+
+// A function that update the chart when slider is moved
+function updateScore(updatedScore) {
+  scoreValue.enter().append('text')
+  scoreValue.text(`${updatedScore}`)
+
+  d3.selectAll('.location_pin').remove();
+
+  restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
+>>>>>>> Stashed changes
     [x_projection, y_projection] = projection([d.longitude, d.latitude])
     return {
         name: d.name,
@@ -43,6 +153,7 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
         longitude: +d.longitude, 
         x: +x_projection,
         y: +y_projection
+<<<<<<< Updated upstream
     }; 
       }).then(drawLocationPins) 
 
@@ -233,3 +344,65 @@ function drawLocationPins(restaurantData){
   }
 
   }
+=======
+    }; })
+    .then(function(restaurantData) {
+        svg.selectAll('.location_pin')
+        .data(restaurantData)
+        .join('circle')
+        .attr('class', 'location_pin')
+        .attr('r', 3)
+        .attr('cx', d => d.x)
+        .attr('cy', d => d.y)
+        //.attr('fill', 'steelblue')
+        .attr('fill', function(d) {
+          if(parseInt(d.score) >= parseInt(updatedScore)) {
+            console.log(`SCORE: ${d.score}; SLIDER: ${updatedScore}`)
+            return 'steelblue'}
+          else {return 'none'}
+        ;})
+        .on('mouseover', function(event, d) {
+          d3.select(this).style("fill", "green")
+          d3.select(this).style("stroke", "black")
+          // Label for Name, Grade, and Score of each place
+          // Split into three 'text' labels for spacing
+          svg.append('text')
+            .attr('class', 'ptLabel')
+            .attr('x', d.x + LABEL_MARGIN)
+            .attr('y', d.y)
+            .text(`Name: ${d.name}`)
+          svg.append('text')
+            .attr('class', 'ptLabel')
+            .attr('x', d.x + LABEL_MARGIN)
+            .attr('y', d.y + LABEL_MARGIN)
+            .text(`Grade: ${d.grade}`)
+          svg.append('text')
+            .attr('class', 'ptLabel')
+            .attr('x', d.x + LABEL_MARGIN)
+            .attr('y', d.y + 2 * LABEL_MARGIN)
+            .text(`Score: ${d.score}`)
+        })
+        .on('mouseout', function(event, d) {
+          d3.select(this).style("fill", "steelblue")
+          d3.select(this).style("stroke", "none")
+          svg.selectAll('.ptLabel').remove() // remove all
+        });
+    });
+
+
+  /*svg.selectAll('.location_pin')
+    .data(restaurantData)
+    .join('circle')
+    .attr('class', 'location_pin')
+    .attr('fill', function(restaurantData) {
+      if(d.score >= updatedScore) {return 'steelblue'}
+      else {return 'none'}
+    ;})*/
+}
+
+// Listen to the score slider
+d3.select("#score-slider").on("change", function(d){
+  selectedValue = this.value
+  updateScore(selectedValue)
+});
+>>>>>>> Stashed changes

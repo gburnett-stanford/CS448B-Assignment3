@@ -1,0 +1,15 @@
+#sliders-container {
+    display: flex;
+}
+
+#radius-slider {
+    margin-right: 5em;
+}
+
+#score-slider {
+    margin-right: 1em;
+}
+
+#score-value {
+    margin-top: 1em;
+}
