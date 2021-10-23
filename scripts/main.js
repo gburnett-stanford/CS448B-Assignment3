@@ -21,7 +21,7 @@ var projection = d3.geoMercator()
 
 // Add an SVG element to the DOM
 var svg = d3.select('div#map-svg').append('svg')
-  .attr('width', mapWidth + 250)
+  .attr('width', mapWidth)
   .attr('height', mapHeight);
 
 // Add SVG map at correct size, assuming map is saved in a subdirectory called `data`
@@ -121,20 +121,20 @@ function drawLocationPins(restaurantData) {
     svg.append('text')
       .attr('class', 'ptLabel')
       .style('fill', 'darkblue')
-      .attr('x', d.x + LABEL_MARGIN)
-      .attr('y', d.y)
+      .attr('x', d.x - d.name.length*2)
+      .attr('y', d.y + LABEL_MARGIN * 2)
       .text(`Name: ${d.name}`)
     svg.append('text')
       .attr('class', 'ptLabel')
       .style('fill', 'darkblue')
-      .attr('x', d.x + LABEL_MARGIN)
-      .attr('y', d.y + LABEL_MARGIN)
+      .attr('x', d.x - d.name.length*2)
+      .attr('y', d.y + LABEL_MARGIN * 3)
       .text(`Grade: ${d.grade}`)
     svg.append('text')
       .attr('class', 'ptLabel')
       .style('fill', 'darkblue')
-      .attr('x', d.x + LABEL_MARGIN)
-      .attr('y', d.y + 2 * LABEL_MARGIN)
+      .attr('x', d.x - d.name.length*2)
+      .attr('y', d.y + LABEL_MARGIN * 4)
       .text(`Score: ${d.score}`)
   }
 
