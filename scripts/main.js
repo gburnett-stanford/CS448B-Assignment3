@@ -21,7 +21,7 @@ var projection = d3.geoMercator()
 
 // Add an SVG element to the DOM
 var svg = d3.select('div#map-svg').append('svg')
-  .attr('width', mapWidth + 250)
+  .attr('width', mapWidth) //  + 250)
   .attr('height', mapHeight);
 
 // Add SVG map at correct size, assuming map is saved in a subdirectory called `data`
@@ -166,8 +166,8 @@ function drawLocationPins(restaurantData) {
 
     // defining new x and y values for the search area, to make sure
     // they stay within the bounds of the map 
-    bounded_cx = Math.max(radius, Math.min(mapWidth-radius, event.x));
-    bounded_cy = Math.max(radius, Math.min(mapHeight-radius, event.y));
+    bounded_cx = Math.max(0, Math.min(mapWidth, event.x));
+    bounded_cy = Math.max(0, Math.min(mapHeight, event.y));
 
     // set the new x and y positions
     d3.select(this)
