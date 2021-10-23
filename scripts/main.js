@@ -82,8 +82,6 @@ function drawLocationPins(restaurantData) {
     .attr('cy', d => d.y)
     .attr('opacity', 0.3)
 
-  updateLocationPins()
-
   // update which points are intersecting and which ones are not 
   function updateLocationPins() {
 
@@ -122,16 +120,19 @@ function drawLocationPins(restaurantData) {
     // Split into three 'text' labels for spacing
     svg.append('text')
       .attr('class', 'ptLabel')
+      .style('fill', 'darkblue')
       .attr('x', d.x + LABEL_MARGIN)
       .attr('y', d.y)
       .text(`Name: ${d.name}`)
     svg.append('text')
       .attr('class', 'ptLabel')
+      .style('fill', 'darkblue')
       .attr('x', d.x + LABEL_MARGIN)
       .attr('y', d.y + LABEL_MARGIN)
       .text(`Grade: ${d.grade}`)
     svg.append('text')
       .attr('class', 'ptLabel')
+      .style('fill', 'darkblue')
       .attr('x', d.x + LABEL_MARGIN)
       .attr('y', d.y + 2 * LABEL_MARGIN)
       .text(`Score: ${d.score}`)
@@ -203,17 +204,15 @@ function drawLocationPins(restaurantData) {
         .duration(200)
         .delay(10)
         .attr('r', updatedRadius)
+    .on("end", updateLocationPins);
   }
 
   // Listen to the radius slider
   d3.select('#radius-slider')
-    .on('change', radiusChange);
-
-  function radiusChange(d){
-    selectedValue = this.value
-    updateRadius(selectedValue)
-    updateLocationPins()
-  }
+    .on('change', function(d) {
+      selectedValue = this.value
+      updateRadius(selectedValue)
+    });
 
   // ********** SCORE SLIDER **********
 
@@ -225,11 +224,7 @@ function drawLocationPins(restaurantData) {
     scoreValue.enter().append('text')
     scoreValue.text(`${currentScore}`)
 
-    // d3.selectAll('.location_pin').remove();
-    // drawLocationPins(restaurantData);
-
     updateLocationPins()
-
   }
 
   // Listen to the score slider
