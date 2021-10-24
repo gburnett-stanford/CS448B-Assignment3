@@ -48,26 +48,41 @@ restaurantData = d3.csv('data/restaurant_data.csv', function(d) {
 
 // ********** DRAW A SEARCH AREA (CIRCLES A & B) **********
 
-// Draw a search area as circles A and B
-svg.append('circle')
-.attr('class', 'radius')
-.attr('id', 'circle-a')
-.attr('r', 50)
-.attr('cx', 100)
-.attr('cy', 100)
-.attr('fill', 'black')
-.attr('opacity', 0.3)
+circle_a = svg.append('g')
+  .attr('transform', 'translate(100, 100)')
 
-// Draw a search area as a circle 
-svg.append('circle')
-.attr('class', 'radius')
-.attr('id', 'circle-b')
-.attr('r', 50)
-.attr('cx', 200)
-.attr('cy', 200)
-.attr('fill', 'black')
-.attr('opacity', 0.3)
-.text('B')
+circle_a.append('circle')
+  .attr('class', 'radius')
+  .attr('id', 'circle-a')
+  .attr('r', 50)
+  .attr('cx', 0)
+  .attr('cy', 0)
+  .attr('fill', 'black')
+  .attr('opacity', 0.3)
+
+circle_a.append('text')
+  .attr('x', circle_a.select('.radius').attr('cx'))
+  .attr('y', d3.select('#circle-a').attr('cy'))
+  .attr('dy', '0.35em')
+  .attr('dx', '-0.35em')
+  .text('A')
+
+circle_b = svg.append('g')
+  .attr('transform', 'translate(200, 200)')
+
+circle_b.append('circle')
+  .attr('class', 'radius')
+  .attr('id', 'circle-b')
+  .attr('r', 50)
+  .attr('cx', 0)
+  .attr('cy', 0)
+  .attr('fill', 'black')
+  .attr('opacity', 0.3)
+
+circle_b.append('text')
+  .attr('dy', '0.35em')
+  .attr('dx', '-0.35em')
+  .text('B')
 
 // Function: drawLocationPins
 function drawLocationPins(restaurantData) {
@@ -150,7 +165,7 @@ function drawLocationPins(restaurantData) {
   // Behavior at the start of the drag (clicking on the search area): 
   // 1. Change the stroke to red, for visual feedback 
   function dragStart() {
-    d3.select(this)
+    d3.select(this).select('.radius')
       .attr('stroke', 'red')
       .attr('stroke-width', '2')
   }
@@ -162,7 +177,7 @@ function drawLocationPins(restaurantData) {
 
     // the radius of the search area is ever changing so 
     // we need to pull the value directly from the object 
-    radius = d3.select(this).attr('r')
+    radius = d3.select(this).select('.radius').attr('r')
 
     // defining new x and y values for the search area, to make sure
     // they stay within the bounds of the map 
@@ -171,14 +186,13 @@ function drawLocationPins(restaurantData) {
 
     // set the new x and y positions
     d3.select(this)
-      .attr('cx', bounded_cx)
-      .attr('cy', bounded_cy)
+      .attr('transform', 'translate(' + bounded_cx + ', ' + bounded_cy + ')')
   }
 
   // Behavior when the search area is no longer being dragged:  
   // 1. Remove the stroke 
   function dragEnd() {
-    d3.select(this)
+    d3.select(this).select('.radius')
       .attr('stroke', null)
       .attr('stroke-width', null)
       updateLocationPins()
@@ -191,7 +205,8 @@ function drawLocationPins(restaurantData) {
     .on('end', dragEnd)
 
   // Apply the handler to the radius objects 
-  drag_handler(svg.selectAll('.radius'));
+  drag_handler(circle_a)
+  drag_handler(circle_b)
 
   // ***** RADIUS SLIDER *****
 
