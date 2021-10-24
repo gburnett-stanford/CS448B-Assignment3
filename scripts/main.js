@@ -210,11 +210,12 @@ function drawLocationPins(restaurantData) {
 
   // ***** RADIUS SLIDER *****
 
-  var circleRadius = d3.selectAll('.radius')
+  var circleRadiusA = d3.select('#circle-a')
+  var circleRadiusB = d3.select('#circle-b')
 
   // A function that update the chart when slider is moved
-  function updateRadius(updatedRadius) {
-    circleRadius.transition()
+  function updateRadius(updatedRadius, selectedCircle) {
+    selectedCircle.transition()
       .ease(d3.easeLinear)
         .duration(200)
         .delay(10)
@@ -222,11 +223,18 @@ function drawLocationPins(restaurantData) {
     .on("end", updateLocationPins);
   }
 
-  // Listen to the radius slider
-  d3.select('#radius-slider')
+  // Listen to the radius slider A
+  d3.select('#radius-slider-a')
     .on('change', function(d) {
       selectedValue = this.value
-      updateRadius(selectedValue)
+      updateRadius(selectedValue, circleRadiusA)
+    });
+
+  // Listen to the radius slider B
+  d3.select('#radius-slider-b')
+    .on('change', function(d) {
+      selectedValue = this.value
+      updateRadius(selectedValue, circleRadiusB)
     });
 
   // ********** SCORE SLIDER **********
