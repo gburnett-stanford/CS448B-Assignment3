@@ -59,6 +59,8 @@ circle_a.append('circle')
   .attr('cy', 0)
   .attr('fill', 'black')
   .attr('opacity', 0.3)
+  .attr('data-absolute-x', 100)
+  .attr('data-absolute-y', 100)
 
 circle_a.append('text')
   .attr('x', circle_a.select('.radius').attr('cx'))
@@ -78,6 +80,8 @@ circle_b.append('circle')
   .attr('cy', 0)
   .attr('fill', 'black')
   .attr('opacity', 0.3)
+  .attr('data-absolute-x', 200)
+  .attr('data-absolute-y', 200)
 
 circle_b.append('text')
   .attr('dy', '0.35em')
@@ -166,7 +170,7 @@ function drawLocationPins(restaurantData) {
   // 1. Change the stroke to red, for visual feedback 
   function dragStart() {
     d3.select(this).select('.radius')
-      .attr('stroke', 'red')
+      .attr('stroke', 'steelblue')
       .attr('stroke-width', '2')
   }
 
@@ -187,6 +191,12 @@ function drawLocationPins(restaurantData) {
     // set the new x and y positions
     d3.select(this)
       .attr('transform', 'translate(' + bounded_cx + ', ' + bounded_cy + ')')
+
+    // keep track of absolute values 
+    d3.select(this).select('.radius')
+      .attr('data-absolute-x', bounded_cx)
+      .attr('data-absolute-y', bounded_cy)
+
   }
 
   // Behavior when the search area is no longer being dragged:  
@@ -271,22 +281,22 @@ function distance(p1, p2) {
 function intersecting() {
 
   // retrieve the objects for the circles and location pin
-  circle_a = d3.select('#circle-a')
-  circle_b = d3.select('#circle-b')
+  circle_a_radius = circle_a.select('.radius')
+  circle_b_radius = circle_b.select('.radius')
   location_pin = d3.select(this)
 
-  // create objects representing the centers 
-  circle_a_center = {x: Number(circle_a.attr('cx')), y: Number(circle_a.attr('cy'))}
-  circle_b_center = {x: Number(circle_b.attr('cx')), y: Number(circle_b.attr('cy'))}
+  // find the center of all our objects of interest 
+  circle_a_center = {x: Number(circle_a_radius.attr('data-absolute-x')), y: Number(circle_a_radius.attr('data-absolute-y'))}
+  circle_b_center = {x: Number(circle_b_radius.attr('data-absolute-x')), y: Number(circle_b_radius.attr('data-absolute-y'))}
   location_pin_center = {x: Number(location_pin.attr('cx')), y: Number(location_pin.attr('cy'))}
 
   // get the current radius of each circle 
-  circle_a_radius = Number(circle_a.attr('r'))
-  circle_b_radius = Number(circle_b.attr('r'))
+  circle_a_radius_length = Number(circle_a_radius.attr('r'))
+  circle_b_radius_length = Number(circle_b_radius.attr('r'))
 
   // calculate the distance from the location pin to each circle 
   distance_to_a = distance(circle_a_center, location_pin_center)
   distance_to_b = distance(circle_b_center, location_pin_center)
 
-  return (distance_to_a<=circle_a_radius && distance_to_b<=circle_b_radius)
+  return (distance_to_a<=circle_a_radius_length && distance_to_b<=circle_b_radius_length)
 }
